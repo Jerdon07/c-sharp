@@ -10,22 +10,64 @@ namespace C__Crash_Course
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("How many Languages do you know?:");
-            int languages = int.Parse(Console.ReadLine());
+            bool session = true;
+            int balance = 1000;
 
-            string[] lang = new string[languages];
+            Console.WriteLine("Welcome to my ATM!");
 
-            for (int i = 0; i < lang.Length; i++)
+            do
             {
-                Console.Write($"Language {i + 1}: ");
-                lang[i] = Console.ReadLine();
-            }
+                Console.WriteLine();
+                Console.WriteLine("Please choose your transaction (deposit/withdraw/balance/exit):");
+                string option = Console.ReadLine();
 
-            Console.WriteLine("Here're your Languages!:");
-            foreach (string item in lang)
-            {
-                Console.WriteLine(item);
-            }
+                // Deposit
+                if (option == "deposit")
+                {
+                    Console.Write("Enter amount to deposit: ");
+                    int amount = int.Parse(Console.ReadLine());
+
+                    if (balance < amount) {
+                        Console.WriteLine("Invalid amount!");
+                        break;
+                    } else {
+                        balance += amount;
+                        Console.WriteLine($"New Balance: {balance}");
+                    }
+                }
+
+                // Withdraw
+                if (option == "withdraw")
+                {
+                    Console.Write("Enter amount to withdraw: ");
+                    int amount = int.Parse(Console.ReadLine());
+
+                    if (balance < amount)
+                    {
+                        Console.WriteLine("Invalid amount!");
+                        break;
+                    }
+                    else
+                    {
+                        balance -= amount;
+                        Console.WriteLine($"New Balance: {balance}");
+                    }
+                }
+
+                // Check Balance
+                if (option == "balance")
+                {
+                    Console.WriteLine("Here's your balance:");
+                    Console.WriteLine(balance);
+                }
+
+                // Exit
+                if (option == "exit")
+                {
+                    Console.WriteLine("THank you for using my ATM!");
+                    session = false;
+                }
+            } while (session);
         }
     }
 }
