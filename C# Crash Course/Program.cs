@@ -10,10 +10,22 @@ namespace C__Crash_Course
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Please Enter your name:");
-            string name = Console.ReadLine();
+            Console.WriteLine("How many Languages do you know?:");
+            int languages = int.Parse(Console.ReadLine());
 
-            Console.WriteLine($"Hello {name}!");
+            string[] lang = new string[languages];
+
+            for (int i = 0; i < lang.Length; i++)
+            {
+                Console.Write($"Language {i + 1}: ");
+                lang[i] = Console.ReadLine();
+            }
+
+            Console.WriteLine("Here're your Languages!:");
+            foreach (string item in lang)
+            {
+                Console.WriteLine(item);
+            }
         }
     }
 }
