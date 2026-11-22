@@ -10,64 +10,51 @@ namespace C__Crash_Course
     {
         static void Main(string[] args)
         {
-            bool session = true;
-            int balance = 1000;
+            bool checkStudent(char is_student = 'n') {
+                return char.ToLower(is_student) == 'y';
+            }
 
-            Console.WriteLine("Welcome to my ATM!");
-
-            do
+            string getUniversity()
             {
+                Console.Write("Enter university: ");
+                return Console.ReadLine() ?? "";
+            }
+
+            void userInformation(string user_name, int user_age, bool is_student, string user_university = "")
+            {
+                string birth_year =  (2026 - user_age).ToString();
+
                 Console.WriteLine();
-                Console.WriteLine("Please choose your transaction (deposit/withdraw/balance/exit):");
-                string option = Console.ReadLine();
+                Console.WriteLine($"Hello {user_name}!");
+                Console.WriteLine($"Your are cuurently {user_age}, born in year {birth_year}!");
 
-                // Deposit
-                if (option == "deposit")
+                if (is_student)
                 {
-                    Console.Write("Enter amount to deposit: ");
-                    int amount = int.Parse(Console.ReadLine());
-
-                    if (balance < amount) {
-                        Console.WriteLine("Invalid amount!");
-                        break;
-                    } else {
-                        balance += amount;
-                        Console.WriteLine($"New Balance: {balance}");
-                    }
+                    Console.WriteLine($"You're currently enrolled in {user_university}");
                 }
-
-                // Withdraw
-                if (option == "withdraw")
+                else
                 {
-                    Console.Write("Enter amount to withdraw: ");
-                    int amount = int.Parse(Console.ReadLine());
-
-                    if (balance < amount)
-                    {
-                        Console.WriteLine("Invalid amount!");
-                        break;
-                    }
-                    else
-                    {
-                        balance -= amount;
-                        Console.WriteLine($"New Balance: {balance}");
-                    }
+                    Console.WriteLine("Congrats on your first step of your career! Good luck on your way of achieving your dream! Gambare gambare!");
                 }
+            }
 
-                // Check Balance
-                if (option == "balance")
-                {
-                    Console.WriteLine("Here's your balance:");
-                    Console.WriteLine(balance);
-                }
+            Console.Write("Enter Name: ");
+            string name = Console.ReadLine() ?? "";
 
-                // Exit
-                if (option == "exit")
-                {
-                    Console.WriteLine("THank you for using my ATM!");
-                    session = false;
-                }
-            } while (session);
+            Console.Write("Enter Age: ");
+            int age = int.Parse(Console.ReadLine() ?? "0");
+
+            Console.Write("Are you a college student? (y/n): ");
+            bool student = checkStudent(char.Parse(Console.ReadLine() ?? "n"));
+
+            string university = student ? getUniversity() : "";
+
+            userInformation(
+                user_name: name,
+                user_age: age,
+                is_student: student,
+                user_university: university
+            );
         }
     }
 }
