@@ -10,51 +10,67 @@ namespace C__Crash_Course
     {
         static void Main(string[] args)
         {
-            bool checkStudent(char is_student = 'n') {
-                return char.ToLower(is_student) == 'y';
-            }
+            Person person1 = new Person();
 
-            string getUniversity()
+            Person person2 = new Person("Jerdon", 22);
+
+            person1.Introduce();
+            person2.Introduce();
+        }
+    }
+
+    public class Person
+    {
+        public string Name;
+        public int Age;
+
+        public Person()
+        {
+            Console.WriteLine("Empty Constructor.");
+        }
+
+        public Person(string name, int age)
+        {
+            Name = name;
+            Age = age;
+        }
+
+        public void Introduce()
+        {
+            Console.WriteLine($"Hello, my name is {Name} and I'm {Age} years old!");
+        }
+
+        public class BankAccount
+        {
+            private decimal __balance;
+
+            public decimal Balance
             {
-                Console.Write("Enter university: ");
-                return Console.ReadLine() ?? "";
+                get
+                {
+                    return __balance;
+                }
+
+                set
+                {
+                    if (value < 0)
+                        __balance = 0;
+                    else
+                    {
+                        __balance = value;
+                    }
+                }
             }
 
-            void userInformation(string user_name, int user_age, bool is_student, string user_university = "")
+            public void Deposit(decimal amount)
             {
-                string birth_year =  (2026 - user_age).ToString();
-
-                Console.WriteLine();
-                Console.WriteLine($"Hello {user_name}!");
-                Console.WriteLine($"Your are cuurently {user_age}, born in year {birth_year}!");
-
-                if (is_student)
-                {
-                    Console.WriteLine($"You're currently enrolled in {user_university}");
-                }
-                else
-                {
-                    Console.WriteLine("Congrats on your first step of your career! Good luck on your way of achieving your dream! Gambare gambare!");
-                }
+                Balance += amount;
             }
 
-            Console.Write("Enter Name: ");
-            string name = Console.ReadLine() ?? "";
-
-            Console.Write("Enter Age: ");
-            int age = int.Parse(Console.ReadLine() ?? "0");
-
-            Console.Write("Are you a college student? (y/n): ");
-            bool student = checkStudent(char.Parse(Console.ReadLine() ?? "n"));
-
-            string university = student ? getUniversity() : "";
-
-            userInformation(
-                user_name: name,
-                user_age: age,
-                is_student: student,
-                user_university: university
-            );
+            public void Withdraw(decimal amount)
+            {
+                Balance -= amount;
+            }
         }
     }
 }
