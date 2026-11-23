@@ -10,46 +10,45 @@ namespace C__Crash_Course
     {
         static void Main(string[] args)
         {
-            BankAccount account = new BankAccount();
+            Car car = new Car("Toyota", "Raize", 2022, 5);
 
-            account.Deposit(100);
-            account.Withdraw(10);
-            account.Withdraw(20);
+            car.DisplayInfo();
+        }
+    }
 
-            Console.WriteLine(account.Balance);
+    public class Vehicle
+    {
+        public string Brand { get; set; }
+        public string Model { get; set; }
+        protected int Year { get; set; }
+
+        public Vehicle(string brand, string model, int year)
+        {
+            Brand = brand;
+            Model = model;
+            Year = year;
+
         }
 
-        public class BankAccount
+        public virtual void DisplayInfo()
         {
-            private decimal balance;
+            Console.WriteLine($"{Brand} {Model} {Year}");
+        }
+    }
 
-            public decimal Balance
-            {
-                get { return balance; }
-                private set { balance = value; }
-            }
+    public class Car : Vehicle
+    {
+        public int NumberOfDoors { get; set; }
 
-            public void Deposit(decimal amount)
-            {
-                if (amount > 0)
-                {
-                    balance += amount;
-                    Console.WriteLine($"Deposited ${amount}. New balance: ${balance}");
-                }
-            }
+        public Car(string brand, string model, int year, int doors) : base(brand, model, year)
+        {
+            NumberOfDoors = doors;
+        }
 
-            public void Withdraw(decimal amount)
-            {
-                if (amount > balance || amount < 0)
-                {
-                    Console.WriteLine("Insufficient funds or invalid amount");
-                }
-                else
-                {
-                    balance -= amount;
-                    Console.WriteLine($"Withdrawn ${amount}. New balance: ${balance}");
-                }
-            }
+        public override void DisplayInfo()
+        {
+            base.DisplayInfo();
+            Console.WriteLine($"Number of doors: {NumberOfDoors}");
         }
     }
 }
