@@ -10,66 +10,45 @@ namespace C__Crash_Course
     {
         static void Main(string[] args)
         {
-            Person person1 = new Person();
+            BankAccount account = new BankAccount();
 
-            Person person2 = new Person("Jerdon", 22);
+            account.Deposit(100);
+            account.Withdraw(10);
+            account.Withdraw(20);
 
-            person1.Introduce();
-            person2.Introduce();
-        }
-    }
-
-    public class Person
-    {
-        public string Name;
-        public int Age;
-
-        public Person()
-        {
-            Console.WriteLine("Empty Constructor.");
-        }
-
-        public Person(string name, int age)
-        {
-            Name = name;
-            Age = age;
-        }
-
-        public void Introduce()
-        {
-            Console.WriteLine($"Hello, my name is {Name} and I'm {Age} years old!");
+            Console.WriteLine(account.Balance);
         }
 
         public class BankAccount
         {
-            private decimal __balance;
+            private decimal balance;
 
             public decimal Balance
             {
-                get
-                {
-                    return __balance;
-                }
-
-                set
-                {
-                    if (value < 0)
-                        __balance = 0;
-                    else
-                    {
-                        __balance = value;
-                    }
-                }
+                get { return balance; }
+                private set { balance = value; }
             }
 
             public void Deposit(decimal amount)
             {
-                Balance += amount;
+                if (amount > 0)
+                {
+                    balance += amount;
+                    Console.WriteLine($"Deposited ${amount}. New balance: ${balance}");
+                }
             }
 
             public void Withdraw(decimal amount)
             {
-                Balance -= amount;
+                if (amount > balance || amount < 0)
+                {
+                    Console.WriteLine("Insufficient funds or invalid amount");
+                }
+                else
+                {
+                    balance -= amount;
+                    Console.WriteLine($"Withdrawn ${amount}. New balance: ${balance}");
+                }
             }
         }
     }
