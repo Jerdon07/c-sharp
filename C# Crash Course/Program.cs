@@ -10,76 +10,156 @@ namespace C__Crash_Course
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("\nWelcome to my console calculator!");
+            Console.WriteLine("Welcome to my ATM machine!");
+            Dictionary<int, BankAccount> accounts = new Dictionary<int, BankAccount>();
+
             bool keepRunning = true;
+
             while (keepRunning)
             {
-                Console.Write("Enter first number: ");
-                double num1 = GetValidNumber();
+                Console.WriteLine("\nSelect option: ");
+                Console.WriteLine("1. Create account");
+                Console.WriteLine("2. Deposit");
+                Console.WriteLine("3. Withdraw");
+                Console.WriteLine("4. Check Balance");
+                Console.WriteLine("5. Exit");
 
-                Console.Write("Enter operator (+, -, *, /): ");
-                string operation = GetValidOperator();
-
-                Console.Write("Enter second number: ");
-                double num2 = GetValidNumber();
-
-                double result = PerformCalculation(num1, num2, operation);
-                Console.WriteLine(result);
-
-                Console.Write("\nNew Calculation? (y/n): ");
-                string continueResponse = Console.ReadLine()?.Trim().ToLower();
-                keepRunning = continueResponse == "y";
+                string choice = Console.ReadLine();
+                switch (choice)
+                {
+                    case "1":
+                        CreateAccount(accounts);
+                        break;
+                    case "2":
+                        Deposit(accounts);
+                        break;
+                    case "3":
+                        Withdraw(accounts);
+                        break;
+                    case "4":
+                        CheckBalance(accounts);
+                        break;
+                    case "5":
+                        keepRunning = false;
+                        Console.WriteLine("Thanks for using my ATM!");
+                        break;
+                    default:
+                        Console.WriteLine("Invalid option.");
+                        break;
+                }
             }
-
-            Console.WriteLine("Thanks for using my calculator!");
         }
 
-        static double GetValidNumber()
+        class BankAccount
+        {
+            public int AccountNumber { get; private set; }
+            public string Name { get; private set; }
+            public double Balance { get; private set; }
+
+            public BankAccount(int accountNumber, string name, double initialDeposit)
+            {
+                AccountNumber = accountNumber;
+                Name = name;
+                Balance = initialDeposit;
+            }
+
+            public void Deposit (double amount)
+            {
+                Balance += amount;
+            }
+
+            public bool Withdraw (double amount)
+            {
+                if (amount <= Balance)
+                {
+                    Balance -= amount;
+                    return true;
+                }
+
+                return false;
+            }
+        }
+
+        static void CreateAccount(Dictionary<int, BankAccount> accounts)
+        {
+            Console.Write("\nEnter name: ");
+            string name = Console.ReadLine();
+
+            Console.Write("\nEnter initial balance: ");
+            double initialBalance = GetValidAmount();
+
+            int accountNumber = accounts.Count + 1;
+            accounts[accountNumber] = new BankAccount(accountNumber, name, initialBalance);
+
+            Console.WriteLine($"Account {accountNumber} created.");
+        }
+
+        static void Deposit(Dictionary<int, BankAccount> accounts)
+        {
+            Console.Write("\nEnter account number: ");
+            int accountNumber = GetValidAccountNumber(accounts);
+
+            Console.Write("Enter deposit amount: ");
+            double amount = GetValidAmount();
+
+            accounts[accountNumber].Deposit(amount);
+            Console.WriteLine($"Deposited. New balance: {accounts[accountNumber].Balance}");
+        }
+
+        static void Withdraw(Dictionary<int, BankAccount> accounts)
+        {
+            Console.Write("\nEnter account number: ");
+            int accountNumber = GetValidAccountNumber(accounts);
+
+            Console.Write("Enter withdraw amount: ");
+            double amount = GetValidAmount();
+
+            if (accounts[accountNumber].Withdraw(amount))
+            {
+                Console.WriteLine($"Withdrawn. New balance: {accounts[accountNumber].Balance}");
+            }
+            else
+            {
+                Console.WriteLine("Insufficient funds.");
+            }
+        }
+
+        static void CheckBalance(Dictionary<int, BankAccount> accounts)
+        {
+            Console.Write("\nEnter account number: ");
+            int accountNumber = GetValidAccountNumber(accounts);
+
+            Console.WriteLine($"Account Holder: {accounts[accountNumber].Name}");
+            Console.WriteLine($"Account Balance: {accounts[accountNumber].Balance}");
+        }
+
+        static double GetValidAmount()
         {
             while (true)
             {
-                if (double.TryParse(Console.ReadLine(), out double number))
+                if (double.TryParse(Console.ReadLine(), out double amount) && amount > 0)
                 {
-                    return number;
+                    return amount;
                 }
                 else
                 {
-                    Console.WriteLine("Invalid input.");
+                    Console.Write("Enter valid amount: ");
                 }
             }
         }
 
-        static string GetValidOperator()
+        static int GetValidAccountNumber(Dictionary<int, BankAccount> accounts)
         {
             while (true)
             {
-                string operation = Console.ReadLine()?.Trim();
-
-                if (operation == "+" || operation == "-" || operation == "*" || operation == "/")
+                if (int.TryParse(Console.ReadLine(), out int accountNumber) && accounts.ContainsKey(accountNumber))
                 {
-                    return operation;
+                    return accountNumber;
                 }
                 else
                 {
-                    Console.WriteLine("Invalid operator.");
+                    Console.Write("Enter valid number: ");
                 }
-            }
-        }
-
-        static double PerformCalculation(double num1, double num2, string operation)
-        {
-            switch (operation)
-            {
-                case "+":
-                    return num1 + num2;
-                case "-":
-                    return num1 - num2;
-                case "*":
-                    return num1 * num2;
-                case "/":
-                    return num2 != 0 ? num1 / num2 : throw new DivideByZeroException("Can't divide by 0.");
-                default:
-                    throw new InvalidOperationException("Undexpected operator.");
             }
         }
     }
