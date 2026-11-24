@@ -10,45 +10,77 @@ namespace C__Crash_Course
     {
         static void Main(string[] args)
         {
-            Car car = new Car("Toyota", "Raize", 2022, 5);
+            Console.WriteLine("\nWelcome to my console calculator!");
+            bool keepRunning = true;
+            while (keepRunning)
+            {
+                Console.Write("Enter first number: ");
+                double num1 = GetValidNumber();
 
-            car.DisplayInfo();
-        }
-    }
+                Console.Write("Enter operator (+, -, *, /): ");
+                string operation = GetValidOperator();
 
-    public class Vehicle
-    {
-        public string Brand { get; set; }
-        public string Model { get; set; }
-        protected int Year { get; set; }
+                Console.Write("Enter second number: ");
+                double num2 = GetValidNumber();
 
-        public Vehicle(string brand, string model, int year)
-        {
-            Brand = brand;
-            Model = model;
-            Year = year;
+                double result = PerformCalculation(num1, num2, operation);
+                Console.WriteLine(result);
 
-        }
+                Console.Write("\nNew Calculation? (y/n): ");
+                string continueResponse = Console.ReadLine()?.Trim().ToLower();
+                keepRunning = continueResponse == "y";
+            }
 
-        public virtual void DisplayInfo()
-        {
-            Console.WriteLine($"{Brand} {Model} {Year}");
-        }
-    }
-
-    public class Car : Vehicle
-    {
-        public int NumberOfDoors { get; set; }
-
-        public Car(string brand, string model, int year, int doors) : base(brand, model, year)
-        {
-            NumberOfDoors = doors;
+            Console.WriteLine("Thanks for using my calculator!");
         }
 
-        public override void DisplayInfo()
+        static double GetValidNumber()
         {
-            base.DisplayInfo();
-            Console.WriteLine($"Number of doors: {NumberOfDoors}");
+            while (true)
+            {
+                if (double.TryParse(Console.ReadLine(), out double number))
+                {
+                    return number;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input.");
+                }
+            }
+        }
+
+        static string GetValidOperator()
+        {
+            while (true)
+            {
+                string operation = Console.ReadLine()?.Trim();
+
+                if (operation == "+" || operation == "-" || operation == "*" || operation == "/")
+                {
+                    return operation;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid operator.");
+                }
+            }
+        }
+
+        static double PerformCalculation(double num1, double num2, string operation)
+        {
+            switch (operation)
+            {
+                case "+":
+                    return num1 + num2;
+                case "-":
+                    return num1 - num2;
+                case "*":
+                    return num1 * num2;
+                case "/":
+                    return num2 != 0 ? num1 / num2 : throw new DivideByZeroException("Can't divide by 0.");
+                default:
+                    throw new InvalidOperationException("Undexpected operator.");
+            }
         }
     }
 }
