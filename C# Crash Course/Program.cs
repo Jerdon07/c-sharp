@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
+using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,155 +13,180 @@ namespace C__Crash_Course
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Welcome to my ATM machine!");
-            Dictionary<int, BankAccount> accounts = new Dictionary<int, BankAccount>();
+            Console.Write("Welcometo my Shape Calculator!");
+            List<Shape> shapes = new List<Shape>();
 
             bool keepRunning = true;
 
             while (keepRunning)
             {
-                Console.WriteLine("\nSelect option: ");
-                Console.WriteLine("1. Create account");
-                Console.WriteLine("2. Deposit");
-                Console.WriteLine("3. Withdraw");
-                Console.WriteLine("4. Check Balance");
+                Console.WriteLine("\nChoose a shape.");
+                Console.WriteLine("1. Circle");
+                Console.WriteLine("2. Rectangle");
+                Console.WriteLine("3. Triangle");
+                Console.WriteLine("4. View all shape details");
                 Console.WriteLine("5. Exit");
 
                 string choice = Console.ReadLine();
+
                 switch (choice)
                 {
                     case "1":
-                        CreateAccount(accounts);
+                        shapes.Add(CreateCircle());
                         break;
                     case "2":
-                        Deposit(accounts);
+                        shapes.Add(CreateRectangle());
                         break;
                     case "3":
-                        Withdraw(accounts);
+                        shapes.Add(CreateTriangle());
                         break;
                     case "4":
-                        CheckBalance(accounts);
+                        DisplayShapes(shapes);
                         break;
                     case "5":
                         keepRunning = false;
-                        Console.WriteLine("Thanks for using my ATM!");
+                        Console.WriteLine("Thank you for using my calcu!");
                         break;
                     default:
-                        Console.WriteLine("Invalid option.");
+                        Console.WriteLine("Invalid choice.");
                         break;
                 }
             }
         }
 
-        class BankAccount
+        abstract class Shape
         {
-            public int AccountNumber { get; private set; }
-            public string Name { get; private set; }
-            public double Balance { get; private set; }
+            public abstract double CalculateArea();
+            public abstract double CalculatePerimeter();
+        }
 
-            public BankAccount(int accountNumber, string name, double initialDeposit)
+        class Circle : Shape
+        {
+            public double Radius { get; set; }
+
+            public Circle(double radius)
             {
-                AccountNumber = accountNumber;
-                Name = name;
-                Balance = initialDeposit;
+                Radius = radius;
             }
 
-            public void Deposit (double amount)
+            public override double CalculateArea()
             {
-                Balance += amount;
+                return Math.PI * Radius * Radius;
             }
 
-            public bool Withdraw (double amount)
+            public override double CalculatePerimeter()
             {
-                if (amount <= Balance)
-                {
-                    Balance -= amount;
-                    return true;
-                }
-
-                return false;
+                return 2 * Math.PI * Radius;
             }
         }
 
-        static void CreateAccount(Dictionary<int, BankAccount> accounts)
+        class Rectangle : Shape
         {
-            Console.Write("\nEnter name: ");
-            string name = Console.ReadLine();
+            public double Length { get; set; }
+            public double Width { get; set; }
 
-            Console.Write("\nEnter initial balance: ");
-            double initialBalance = GetValidAmount();
-
-            int accountNumber = accounts.Count + 1;
-            accounts[accountNumber] = new BankAccount(accountNumber, name, initialBalance);
-
-            Console.WriteLine($"Account {accountNumber} created.");
-        }
-
-        static void Deposit(Dictionary<int, BankAccount> accounts)
-        {
-            Console.Write("\nEnter account number: ");
-            int accountNumber = GetValidAccountNumber(accounts);
-
-            Console.Write("Enter deposit amount: ");
-            double amount = GetValidAmount();
-
-            accounts[accountNumber].Deposit(amount);
-            Console.WriteLine($"Deposited. New balance: {accounts[accountNumber].Balance}");
-        }
-
-        static void Withdraw(Dictionary<int, BankAccount> accounts)
-        {
-            Console.Write("\nEnter account number: ");
-            int accountNumber = GetValidAccountNumber(accounts);
-
-            Console.Write("Enter withdraw amount: ");
-            double amount = GetValidAmount();
-
-            if (accounts[accountNumber].Withdraw(amount))
+            public Rectangle(double length, double width)
             {
-                Console.WriteLine($"Withdrawn. New balance: {accounts[accountNumber].Balance}");
+                Length = length;
+                Width = width;
             }
-            else
+
+            public override double CalculateArea()
             {
-                Console.WriteLine("Insufficient funds.");
+                return Length * Width;
+            }
+
+            public override double CalculatePerimeter()
+            {
+                return 2 * (Length + Width);
             }
         }
 
-        static void CheckBalance(Dictionary<int, BankAccount> accounts)
+        class Triangle : Shape
         {
-            Console.Write("\nEnter account number: ");
-            int accountNumber = GetValidAccountNumber(accounts);
+            public double SideA { get; set; }
+            public double SideB { get; set; }
+            public double SideC { get; set; }
 
-            Console.WriteLine($"Account Holder: {accounts[accountNumber].Name}");
-            Console.WriteLine($"Account Balance: {accounts[accountNumber].Balance}");
+            public Triangle(double sideA, double sideB, double sideC)
+            {
+                SideA = sideA;
+                SideB = sideB;
+                SideC = sideC;
+            }
+
+            public override double CalculateArea()
+            {
+                double s = (SideA + SideB + SideC) / 2;
+                return Math.Sqrt(s * (s - SideA) * (s - SideB) * (s - SideC));
+            }
+
+            public override double CalculatePerimeter()
+            {
+                return SideA + SideB + SideC;
+            }
         }
 
-        static double GetValidAmount()
+        static Circle CreateCircle()
+        {
+            Console.Write("\nEnter circle radius: ");
+            double radius = GetValidDouble();
+            Circle circle = new Circle(radius);
+            Console.WriteLine($"{radius} radius circle created");
+            return circle;
+        }
+
+        static Rectangle CreateRectangle()
+        {
+            Console.WriteLine("\nEnter rectangle length: ");
+            double length = GetValidDouble();
+            Console.WriteLine("\nEnter rectangle width: ");
+            double width = GetValidDouble();
+            Rectangle rectangle = new Rectangle(length, width);
+            Console.WriteLine($"l: {length}, w: {width} rectangle created");
+            return rectangle;
+        }
+
+        static Triangle CreateTriangle()
+        {
+            Console.WriteLine("\nEnter triangle sides:");
+            double sideA = GetValidDouble();
+            double sideB = GetValidDouble();
+            double sideC = GetValidDouble();
+            Triangle triangle = new Triangle(sideA, sideB, sideC);
+            Console.WriteLine($"Triangle ({sideA}, {sideB}, {sideC}) created");
+            return triangle;
+        }
+
+        static void DisplayShapes(List<Shape> shapes)
+        {
+            if (shapes.Count == 0)
+            {
+                Console.WriteLine("\nNo shapes created yet.");
+                return;
+            }
+
+            Console.WriteLine("\nShape Details:");
+            foreach (Shape shape in shapes)
+            {
+                Console.WriteLine($"Type: {shape.GetType().Name}");
+                Console.WriteLine($"Area: {shape.CalculateArea():F2}");
+                Console.WriteLine($"Perimeter: {shape.CalculatePerimeter():F2}");
+                Console.WriteLine();
+            }
+        }
+
+        static double GetValidDouble()
         {
             while (true)
             {
-                if (double.TryParse(Console.ReadLine(), out double amount) && amount > 0)
+                if (double.TryParse(Console.ReadLine(), out double value) && value > 0)
                 {
-                    return amount;
+                    return value;
                 }
                 else
                 {
-                    Console.Write("Enter valid amount: ");
-                }
-            }
-        }
-
-        static int GetValidAccountNumber(Dictionary<int, BankAccount> accounts)
-        {
-            while (true)
-            {
-                if (int.TryParse(Console.ReadLine(), out int accountNumber) && accounts.ContainsKey(accountNumber))
-                {
-                    return accountNumber;
-                }
-                else
-                {
-                    Console.Write("Enter valid number: ");
+                    Console.WriteLine("Invalid Input.");
                 }
             }
         }
