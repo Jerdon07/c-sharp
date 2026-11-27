@@ -13,182 +13,77 @@ namespace C__Crash_Course
     {
         static void Main(string[] args)
         {
-            Console.Write("Welcometo my Shape Calculator!");
-            List<Shape> shapes = new List<Shape>();
+            // String Extensions
+            string word = "racecar";
+            Console.WriteLine($"Is \"{word}\" a palindrome? {word.IsPalindrome()}");
+            string phrase = "hello world!";
+            Console.WriteLine($"Title Case: {phrase.ToTitleCase()}");
 
-            bool keepRunning = true;
+            //DateTime Extensions
+            DateTime birthDate = new DateTime(2004, 7, 19);
+            Console.WriteLine($"Age: {birthDate.Age()}");
+            Console.WriteLine($"Is today a weekend? {DateTime.Today.IsWeekend()}");
 
-            while (keepRunning)
-            {
-                Console.WriteLine("\nChoose a shape.");
-                Console.WriteLine("1. Circle");
-                Console.WriteLine("2. Rectangle");
-                Console.WriteLine("3. Triangle");
-                Console.WriteLine("4. View all shape details");
-                Console.WriteLine("5. Exit");
+            // Numeric Extensions
+            int number = 7;
+            Console.WriteLine($"{number} is prime? {number.IsPrime()}");
+            double fraction = 0.4567;
+            Console.WriteLine($"As percentage: {fraction.ToPercentage()}%");
+            Console.WriteLine();
+        }
+    }
 
-                string choice = Console.ReadLine();
+    public static class StringExtensions
+    {
+        public static bool IsPalindrome(this string input)
+        {
+            if (string.IsNullOrEmpty(input)) return false;
 
-                switch (choice)
-                {
-                    case "1":
-                        shapes.Add(CreateCircle());
-                        break;
-                    case "2":
-                        shapes.Add(CreateRectangle());
-                        break;
-                    case "3":
-                        shapes.Add(CreateTriangle());
-                        break;
-                    case "4":
-                        DisplayShapes(shapes);
-                        break;
-                    case "5":
-                        keepRunning = false;
-                        Console.WriteLine("Thank you for using my calcu!");
-                        break;
-                    default:
-                        Console.WriteLine("Invalid choice.");
-                        break;
-                }
-            }
+            string reversed = new string(input.Reverse().ToArray());
+            return input.Equals(reversed, StringComparison.OrdinalIgnoreCase);
         }
 
-        abstract class Shape
+        public static string ToTitleCase(this string input)
         {
-            public abstract double CalculateArea();
-            public abstract double CalculatePerimeter();
+            if (string.IsNullOrWhiteSpace(input)) return input;
+
+            return System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(input.ToLower());
+        }
+    }
+
+    public static class DateTimeExtensions
+    {
+        public static int Age(this DateTime birthDate)
+        {
+            var today = DateTime.Today;
+            int age = today.Year - birthDate.Year;
+            if (birthDate > today.AddYears(-age)) age--;
+            return age;
         }
 
-        class Circle : Shape
+        public static bool IsWeekend(this DateTime date)
         {
-            public double Radius { get; set; }
+            return date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday;
+        }
+    }
 
-            public Circle(double radius)
+    public static class NumericExtensions
+    {
+        public static bool IsPrime(this int number)
+        {
+            if (number < 2) return false;
+
+            for (int i = 2; i <= Math.Sqrt(number); i++)
             {
-                Radius = radius;
+                if (number % i == 0) return false;
             }
 
-            public override double CalculateArea()
-            {
-                return Math.PI * Radius * Radius;
-            }
-
-            public override double CalculatePerimeter()
-            {
-                return 2 * Math.PI * Radius;
-            }
+            return true;
         }
 
-        class Rectangle : Shape
+        public static double ToPercentage(this double value, int decimalPlaces = 2)
         {
-            public double Length { get; set; }
-            public double Width { get; set; }
-
-            public Rectangle(double length, double width)
-            {
-                Length = length;
-                Width = width;
-            }
-
-            public override double CalculateArea()
-            {
-                return Length * Width;
-            }
-
-            public override double CalculatePerimeter()
-            {
-                return 2 * (Length + Width);
-            }
-        }
-
-        class Triangle : Shape
-        {
-            public double SideA { get; set; }
-            public double SideB { get; set; }
-            public double SideC { get; set; }
-
-            public Triangle(double sideA, double sideB, double sideC)
-            {
-                SideA = sideA;
-                SideB = sideB;
-                SideC = sideC;
-            }
-
-            public override double CalculateArea()
-            {
-                double s = (SideA + SideB + SideC) / 2;
-                return Math.Sqrt(s * (s - SideA) * (s - SideB) * (s - SideC));
-            }
-
-            public override double CalculatePerimeter()
-            {
-                return SideA + SideB + SideC;
-            }
-        }
-
-        static Circle CreateCircle()
-        {
-            Console.Write("\nEnter circle radius: ");
-            double radius = GetValidDouble();
-            Circle circle = new Circle(radius);
-            Console.WriteLine($"{radius} radius circle created");
-            return circle;
-        }
-
-        static Rectangle CreateRectangle()
-        {
-            Console.WriteLine("\nEnter rectangle length: ");
-            double length = GetValidDouble();
-            Console.WriteLine("\nEnter rectangle width: ");
-            double width = GetValidDouble();
-            Rectangle rectangle = new Rectangle(length, width);
-            Console.WriteLine($"l: {length}, w: {width} rectangle created");
-            return rectangle;
-        }
-
-        static Triangle CreateTriangle()
-        {
-            Console.WriteLine("\nEnter triangle sides:");
-            double sideA = GetValidDouble();
-            double sideB = GetValidDouble();
-            double sideC = GetValidDouble();
-            Triangle triangle = new Triangle(sideA, sideB, sideC);
-            Console.WriteLine($"Triangle ({sideA}, {sideB}, {sideC}) created");
-            return triangle;
-        }
-
-        static void DisplayShapes(List<Shape> shapes)
-        {
-            if (shapes.Count == 0)
-            {
-                Console.WriteLine("\nNo shapes created yet.");
-                return;
-            }
-
-            Console.WriteLine("\nShape Details:");
-            foreach (Shape shape in shapes)
-            {
-                Console.WriteLine($"Type: {shape.GetType().Name}");
-                Console.WriteLine($"Area: {shape.CalculateArea():F2}");
-                Console.WriteLine($"Perimeter: {shape.CalculatePerimeter():F2}");
-                Console.WriteLine();
-            }
-        }
-
-        static double GetValidDouble()
-        {
-            while (true)
-            {
-                if (double.TryParse(Console.ReadLine(), out double value) && value > 0)
-                {
-                    return value;
-                }
-                else
-                {
-                    Console.WriteLine("Invalid Input.");
-                }
-            }
+            return Math.Round(value * 100, decimalPlaces);
         }
     }
 }
